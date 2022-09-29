@@ -1,0 +1,6 @@
+mypython/
+__pycache__/
+some_code
+*~.pyc
+*~
+.idea
