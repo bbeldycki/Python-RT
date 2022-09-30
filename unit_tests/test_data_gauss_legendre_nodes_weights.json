@@ -1,0 +1,37 @@
+{
+  "test_n_2" : {
+    "left_range_of_interval": -1,
+    "right_range_of_interval": 1,
+    "polynomials_degree": 2,
+    "expected_nodes": [-0.57735, 0.57735],
+    "expected_weights": [1.0, 1.0]
+  },
+  "test_n_3" : {
+    "left_range_of_interval": -1,
+    "right_range_of_interval": 1,
+    "polynomials_degree": 3,
+    "expected_nodes": [-0.774597, 0.0, 0.774597],
+    "expected_weights": [0.555556, 0.888889, 0.555556]
+  },
+  "test_n_4" : {
+    "left_range_of_interval": -1,
+    "right_range_of_interval": 1,
+    "polynomials_degree": 4,
+    "expected_nodes": [-0.861136, -0.339981, 0.339981, 0.861136],
+    "expected_weights": [0.347854, 0.652145, 0.652145, 0.347854]
+  },
+  "test_n_5" : {
+    "left_range_of_interval": -1,
+    "right_range_of_interval": 1,
+    "polynomials_degree": 5,
+    "expected_nodes": [-0.906179, -0.538469 , 0.0, 0.538469, 0.906179],
+    "expected_weights": [0.236927, 0.478629, 0.568889, 0.478629, 0.236927]
+  },
+  "test_n_10" : {
+    "left_range_of_interval": -1,
+    "right_range_of_interval": 1,
+    "polynomials_degree": 10,
+    "expected_nodes": [-0.973907, -0.865063, -0.679409, -0.433395, -0.148874, 0.148874, 0.433395, 0.679409, 0.865063, 0.973907],
+    "expected_weights": [0.066671, 0.149451, 0.219086, 0.269266, 0.295524, 0.295524, 0.269266, 0.219086, 0.149451, 0.066671]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "test_3_degree_one_real_two_complex" : {
+    "coefficients": [1, 1, 1, 1],
+    "expected_roots_real_path": [-1, 0, 0],
+    "expected_roots_imaginary_path": [0, 1,-1]
+  },
+  "test_3_degree_three_real_solutions" : {
+    "coefficients": [10, 0, -7, 1],
+    "expected_roots_real_path": [-0.900577, 0.753142, 0.147435],
+    "expected_roots_imaginary_path": [0, 0, 0]
+  },
+  "test_4_degree_no_real_roots" : {
+    "coefficients": [1, 1, 1, 1, 1],
+    "expected_roots_real_path": [0.309016, 0.309016, -0.809016, -0.809016],
+    "expected_roots_imaginary_path": [0.951056, -0.951056, 0.587785, -0.587785]
+  },
+  "test_4_degree_two_real_roots" : {
+    "coefficients": [1, 7, 10, -1, 12],
+    "expected_roots_real_path": [-4.725108, -2.850306, 0.287707, 0.287707],
+    "expected_roots_imaginary_path": [0, 0, 0.899013, -0.899013]
+  },
+  "test_4_degree_four_real_roots" : {
+    "coefficients": [1, 0, -5, 0, 4],
+    "expected_roots_real_path": [-2.0, 2.0, -1.0, 1.0],
+    "expected_roots_imaginary_path": [0, 0, 0, 0]
+  }
+}

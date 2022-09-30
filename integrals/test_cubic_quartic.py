@@ -1,4 +1,4 @@
-from integrals import integrals
+import integrals
 import time
 
 
