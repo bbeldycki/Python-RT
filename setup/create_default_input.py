@@ -24,7 +24,8 @@ def create_default_input_file():
         "beta_max": 10.0,
         "number_of_points_along_x_axis": 20,
         "number_of_points_along_y_axis": 20,
-        "number_of_points_along_trajectory": 500
+        "number_of_points_along_trajectory": 500,
+        "outer_disk_radius": 100.0
     }
     with open("default_setup.json", "w+") as default_file:
         json.dump(schema, default_file, indent=4)
