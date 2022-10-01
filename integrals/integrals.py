@@ -2,12 +2,14 @@ import math
 
 
 def compute_a_p1_pn(p: list, a: list, b: list, y: float, x: float) -> float:
-    # Function which computed value of coefficient A from equation 2.6 from different Carlson Papers
-    # B. C; Carlson; A Table of Elliptic Integrals: Cubic Cases
-    # Mathematics of Computation, Volume 53, Number 187, Pages 327-333, July 1989
-    # AND
-    # B.C; Carlson; A Table of Elliptic Integrals of the Third Kind
-    # Mathematics of Computation, Volume 51, Number 183, Pages 267-280, July 1988
+    """
+        Function which computed value of coefficient A from equation 2.6 from different Carlson Papers
+        B. C; Carlson; A Table of Elliptic Integrals: Cubic Cases
+        Mathematics of Computation, Volume 53, Number 187, Pages 327-333, July 1989
+        AND
+        B.C; Carlson; A Table of Elliptic Integrals of the Third Kind
+        Mathematics of Computation, Volume 51, Number 183, Pages 267-280, July 1988
+    """
     if x < y:
         raise Exception('Error occurred in function compute_a_p1_pn. '
                         'We have situation where x is lower than y. The value of x must be greater than y')
@@ -62,9 +64,11 @@ def compute_a_p1_pn_double_quadratic(p: list, a: list, b: list, fgh1: list, fgh2
 
 
 def compute_a_p1_pn_quadratics(p: list, a: list, b: list, fgh: list, y: float, x: float) -> float:
-    # Function which computed value of coefficient A from equation 2.6 from different Carlson Papers
-    # B.C; Carlson; A Table of Elliptic Integrals: One Quadratic factor
-    # Mathematics of Computation, Volume 56, Number 183, Pages 267-280, July 1991
+    """
+        Function which computed value of coefficient A from equation 2.6 from different Carlson Papers
+        B.C; Carlson; A Table of Elliptic Integrals: One Quadratic factor
+        Mathematics of Computation, Volume 56, Number 183, Pages 267-280, July 1991
+    """
     if x < y:
         raise Exception('Error occurred in function compute_a_p1_pn_quadratics. '
                         'We have situation where x is lower than y. The value of x must be greater than y')
@@ -93,7 +97,10 @@ def compute_a_p1_pn_quadratics(p: list, a: list, b: list, fgh: list, y: float, x
 
 
 def compute_alfa_beta_i5(f: list, g: list, h: list, a5: float, b5: float, k: int) -> tuple:
-    # Function which computes coefficients alfa_i5 and beta_i5
+    """
+        Function which computes coefficients alfa_i5 and beta_i5
+    """
+
     return 2 * f[k] * b5 - g[k] * a5, g[k] * b5 - 2 * h[k] * a5
 
 
@@ -101,13 +108,18 @@ def compute_cij_value(a: list, b: list, fgh: list, k: int, k1: int) -> float:
     return 2 * b[k] * b[k1] * fgh[0] - fgh[1] * (a[k] * b[k1] + a[k1] * b[k]) + 2 * fgh[2] * a[k] * a[k1]
 
 
-def compute_delta_ij(f: list, g: list, h: list, k: int, l: int) -> float:
-    # Function which computes coefficients delta_ij
-    return 2 * f[k] * h[l] + 2 * f[l] * h[k] - g[k] * g[l]
+def compute_delta_ij(f: list, g: list, h: list, k: int, m: int) -> float:
+    """
+        Function which computes coefficients delta_ij
+    """
+    return 2 * f[k] * h[m] + 2 * f[m] * h[k] - g[k] * g[m]
 
 
 def compute_gamma_i5(f: list, g: list, h: list, a5: float, b5: float, k: int) -> float:
-    # Function which computes coefficients gamma_i5
+    """
+        Function which computes coefficients gamma_i5
+    """
+    #
     gama = f[k] * b5 * b5 - g[k] * a5 * b5 + h[k] * a5 * a5
     if gama > 0.0:
         return gama
@@ -117,7 +129,9 @@ def compute_gamma_i5(f: list, g: list, h: list, a5: float, b5: float, k: int) ->
 
 
 def iteration_loop_for_rc_function(x: float, y: float) -> tuple:
-    # Function which contains all calculations needed to be done in iteration
+    """
+            Function which contains all calculations needed to be done in iteration
+    """
     alamb = 2.0 * math.sqrt(x) * math.sqrt(y) + y
     x = 0.25 * (x + alamb)
     y = 0.25 * (y + alamb)
@@ -127,7 +141,9 @@ def iteration_loop_for_rc_function(x: float, y: float) -> tuple:
 
 
 def iteration_loop_for_rd_function(x: float, y: float, z: float, s: float, f: float) -> tuple:
-    # Function which contains all calculations needed to be done in iteration
+    """
+        Function which contains all calculations needed to be done in iteration
+    """
     alamb = math.sqrt(x) * (math.sqrt(y) + math.sqrt(z)) + math.sqrt(y) * math.sqrt(z)
     s = s + f / (math.sqrt(z) * (z + alamb))
     f = 0.25 * f
@@ -142,7 +158,9 @@ def iteration_loop_for_rd_function(x: float, y: float, z: float, s: float, f: fl
 
 
 def iteration_loop_for_rf_function(x: float, y: float, z: float) -> tuple:
-    # Function which contains all calculations needed to be done in iteration
+    """
+        Function which contains all calculations needed to be done in iteration
+    """
     alamb = math.sqrt(x) * (math.sqrt(y) + math.sqrt(z)) + math.sqrt(y) * math.sqrt(z)
     x = 0.25 * (x + alamb)
     y = 0.25 * (y + alamb)
@@ -155,7 +173,9 @@ def iteration_loop_for_rf_function(x: float, y: float, z: float) -> tuple:
 
 
 def iteration_loop_for_rj_function(x: float, y: float, z: float, p: float, s: float, f: float) -> tuple:
-    # Function which contains all calculations needed to be done in iteration
+    """
+        Function which contains all calculations needed to be done in iteration
+    """
     alamb = math.sqrt(x) * (math.sqrt(y) + math.sqrt(z)) + math.sqrt(y) * math.sqrt(z)
     alpha = (p * (math.sqrt(x) + math.sqrt(y) + math.sqrt(z)) + math.sqrt(x) * math.sqrt(y) * math.sqrt(z)) ** 2
     beta = p * (p + alamb) ** 2
@@ -174,11 +194,14 @@ def iteration_loop_for_rj_function(x: float, y: float, z: float, p: float, s: fl
 
 
 def rc(x: float, y: float) -> float:
-    # Function to calculate elliptical integral of the third kind RC
-    # The integral takes the following form
-    # RC(x, y) = 1/2 int from 0 do infinity dt (t + x)^{-1/2} * (t + y)^{-1}
-    # Value x must be greater than 0
-    # Value of y must be nonnegative
+    """
+        Function to calculate elliptical integral of the third kind RC
+        The integral takes the following form
+        RC(x, y) = 1/2 int from 0 do infinity dt (t + x)^{-1/2} * (t + y)^{-1}
+        Value x must be greater than 0
+        Value of y must be nonnegative
+    """
+
     if x < 0:
         raise Exception('Error occurred in function rc. x must be greater than 0')
     elif y == 0.0:
@@ -212,11 +235,14 @@ def rc(x: float, y: float) -> float:
 
 
 def rd(x: float, y: float, z: float) -> float:
-    # Function to calculate elliptical integral of the second kind RD
-    # The integral takes the following form
-    # RD(x, y, z) = 3/2 int from 0 do infinity dt [(t + x) * (t + y)]^{-1/2} * (t + z)^{-3/2}
-    # Values x, y must be greater than 0 and only of them can be equal to 0
-    # Value of z must be positive
+    """
+        Function to calculate elliptical integral of the second kind RD
+        The integral takes the following form
+        RD(x, y, z) = 3/2 int from 0 do infinity dt [(t + x) * (t + y)]^{-1/2} * (t + z)^{-3/2}
+        Values x, y must be greater than 0 and only of them can be equal to 0
+        Value of z must be positive
+    """
+
     if min(x, y) < 0:
         raise Exception('Error occurred in function rd. One or more arguments was smaller than 0')
     elif min(x + y, z) < 1.5e-25:
@@ -248,10 +274,13 @@ def rd(x: float, y: float, z: float) -> float:
 
 
 def rf(x: float, y: float, z: float) -> float:
-    # Function to calculate elliptical integral of the first kind RF
-    # The integral takes the following form
-    # RF(x, y, z) = 1/2 int from 0 do infinity dt [(t + x) * (t + y) * (t + z)]^{-1/2}
-    # Values x, y and z must be greater than 0 and only of them can be equal to 0
+    """
+        Function to calculate elliptical integral of the first kind RF
+        The integral takes the following form
+        RF(x, y, z) = 1/2 int from 0 do infinity dt [(t + x) * (t + y) * (t + z)]^{-1/2}
+        Values x, y and z must be greater than 0 and only of them can be equal to 0
+    """
+
     if min(x, y, z) < 0.0:
         raise Exception('Error occurred in function rf. One or more arguments was smaller than 0')
     elif min(x + y, x + z, y + z) < 1.5e-38:
@@ -273,11 +302,14 @@ def rf(x: float, y: float, z: float) -> float:
 
 
 def rj(x: float, y: float, z: float, p: float) -> float:
-    # Function to calculate elliptical integral of the third kind RJ
-    # The integral takes the following form
-    # RJ(x, y, z, p) = 3/2 int from 0 do infinity dt [(t + x) * (t + y) * (t + z)]^{-1/2} * (t + p)^{-1}
-    # Values x, y and z must be greater than 0 and at most one can by equal 0
-    # Value of p must be nonzero, if p < 0 then the Cauchy principal value is returned
+    """
+        Function to calculate elliptical integral of the third kind RJ
+        The integral takes the following form
+        RJ(x, y, z, p) = 3/2 int from 0 do infinity dt [(t + x) * (t + y) * (t + z)]^{-1/2} * (t + p)^{-1}
+        Values x, y and z must be greater than 0 and at most one can by equal 0
+        Value of p must be nonzero, if p < 0 then the Cauchy principal value is returned
+    """
+
     if min(x, y, z) < 0.0:
         raise Exception('Error occurred in function rj. The lowest of arguments x, y or z is lower than 0.')
     elif min(x + y, x + z, y + z, abs(p)) < 2.5e-13:
@@ -329,8 +361,11 @@ def rj(x: float, y: float, z: float, p: float) -> float:
 
 
 def elliptical_integral_cubic_all_roots_real(p: list, a: list, b: list, ffr: float, y: float, x: float) -> float:
-    # Integral computed based on numerical method by B. C; Carlson; A Table of Elliptic Integrals: Cubic Cases
-    # Mathematics of Computation, Volume 53, Number 187, Pages 327-333, July 1989
+    """
+        Integral computed based on numerical method by B. C; Carlson; A Table of Elliptic Integrals: Cubic Cases
+        Mathematics of Computation, Volume 53, Number 187, Pages 327-333, July 1989
+    """
+
     if x < y:
         raise Exception('Error occurred in function elliptical_integral_cubic_all_roots_real. We have situation where '
                         'x is lower than y. The value of x must be greater than y')
@@ -396,11 +431,14 @@ def elliptical_integral_cubic_all_roots_real(p: list, a: list, b: list, ffr: flo
 
 def elliptical_integral_cubic_one_real_and_two_complex_roots(p: list, a: list, b: list, fgh: list, ffr: float,
                                                              y: float, x: float) -> float:
-    # Integral computed based on numerical method by B. C; Carlson; A Table of Elliptic Integrals of the Third Kind
-    # Mathematics of Computation, Volume 51, Number 183, Pages 267-280, July 1988
-    # And
-    # B. C; Carlson; A Table of Elliptic Integrals: One Quadratic Factor
-    # Mathematics of Computation, Volume 56, Number 193, Pages 267-280, January 1991
+    """
+        Integral computed based on numerical method by B. C; Carlson; A Table of Elliptic Integrals of the Third Kind
+        Mathematics of Computation, Volume 51, Number 183, Pages 267-280, July 1988
+        And
+        B. C; Carlson; A Table of Elliptic Integrals: One Quadratic Factor
+        Mathematics of Computation, Volume 56, Number 193, Pages 267-280, January 1991
+    """
+
     if x < y:
         raise Exception('Error occurred in function elliptical_integral_cubic_one_real_root_two_complex_roots. '
                         'We have situation where x is lower than y. The value of x must be greater than y')
@@ -484,8 +522,11 @@ def elliptical_integral_cubic_one_real_and_two_complex_roots(p: list, a: list, b
 
 
 def elliptical_integral_quartic_all_real_roots(p: list, a: list, b: list, ffr: float, y: float, x: float) -> float:
-    # Integral computed based on numerical method by B. C; Carlson; A Table of Elliptic Integrals of the Third Kind
-    # Mathematics of Computation, Volume 51, Number 183, Pages 267-280, July 1988
+    """
+        Integral computed based on numerical method by B. C; Carlson; A Table of Elliptic Integrals of the Third Kind
+        Mathematics of Computation, Volume 51, Number 183, Pages 267-280, July 1988
+    """
+
     if x < y:
         raise Exception('Error occurred in function elliptical_integral_quartic_all_roots_real. '
                         'We have situation where x is lower than y. The value of x must be greater than y')
@@ -576,11 +617,13 @@ def elliptical_integral_quartic_all_real_roots(p: list, a: list, b: list, ffr: f
 
 def elliptical_integral_quartic_two_real_and_two_complex_roots(p: list, a: list, b: list, fgh: list, ffr: float,
                                                                y: float, x: float) -> float:
-    # Integral computed based on numerical method by B. C; Carlson; A Table of Elliptic Integrals of the Third Kind
-    # Mathematics of Computation, Volume 51, Number 183, Pages 267-280, July 1988
-    # And
-    # B. C; Carlson; A Table of Elliptic Integrals: One Quadratic Factor
-    # Mathematics of Computation, Volume 56, Number 193, Pages 267-280, January 1991
+    """
+        Integral computed based on numerical method by B. C; Carlson; A Table of Elliptic Integrals of the Third Kind
+        Mathematics of Computation, Volume 51, Number 183, Pages 267-280, July 1988
+        And
+        B. C; Carlson; A Table of Elliptic Integrals: One Quadratic Factor
+        Mathematics of Computation, Volume 56, Number 193, Pages 267-280, January 1991
+    """
     if x < y:
         raise Exception('Error occurred in function test_integrals_quartic_case_i123. '
                         'We have situation where x is lower than y. The value of x must be greater than y')
@@ -701,8 +744,10 @@ def elliptical_integral_quartic_two_real_and_two_complex_roots(p: list, a: list,
 
 def elliptical_integral_quartic_all_complex_roots(p: list, a: list, b: list, fgh1: list, fgh2: list, ffr: float,
                                                   y: float, x: float) -> float:
-    # Integral computed based on numerical method by B. C; Carlson; A Table of Elliptic Integrals: Two Quadratic Factors
-    # Mathematics of Computation, Volume 59, Number 199, Pages 165-180, July 1992
+    """
+        Integral computed based on numerical method by B. C; Carlson; A Table of Elliptic Integrals: Two Quadratic Factors
+        Mathematics of Computation, Volume 59, Number 199, Pages 165-180, July 1992
+    """
     if x < y:
         raise Exception('Error occurred in function elliptical_integral_quartic_all_complex_roots. '
                         'We have situation where x is lower than y. The value of x must be greater than y')
