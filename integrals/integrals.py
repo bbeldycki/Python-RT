@@ -360,7 +360,8 @@ def rj(x: float, y: float, z: float, p: float) -> float:
     return integral_value
 
 
-def elliptical_integral_cubic_all_roots_real(p: list, a: list, b: list, ffr: float, y: float, x: float) -> float:
+def elliptical_integral_cubic_all_roots_real(p: list[int], a: list[float], b: list[float], ffr: float, y: float,
+                                             x: float) -> float:
     """
         Integral computed based on numerical method by B. C; Carlson; A Table of Elliptic Integrals: Cubic Cases
         Mathematics of Computation, Volume 53, Number 187, Pages 327-333, July 1989
