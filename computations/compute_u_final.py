@@ -3,7 +3,8 @@ import numpy as np
 import scipy
 from integrals import integrals as ints
 
-from setup.init_setup import Schema
+from setup.init_setup import InitSchema
+from setup.variables import VariablesSchema
 
 
 class ComputeUFinal:
@@ -14,10 +15,10 @@ class ComputeUFinal:
         {'spin', 'u_start', 'mu_start', 'mu_final', 'angular_momentum', 'carter_c', 'mu_turning_points'}
         Output will be return in for of a dict() as well
     """
-    variables: Schema
+    variables: VariablesSchema
 
-    def __init__(self, input_data: Schema):
-        self.variables = input_data
+    def __init__(self, variables: VariablesSchema):
+        self.variables = variables
 
     def compute_mu_integral(self, case: int) -> float:
         def compute_case_1() -> float:
@@ -54,13 +55,9 @@ class ComputeUFinal:
             return compute_case_1()
         if case == 2:
             return compute_case_2()
-        if case == 3:
-            return compute_case_3()
-        if case == 4:
-            return compute_case_4()
         raise Exception('Error occurred in class ComputeUFinal in method compute_mu_integral. '
                         'We checked all possible cases and did not return a proper value. Check file compute_u_final, '
-                        'line: 42.')
+                        'line: 23.')
 
     def compute(self) -> None:
         # we check for edge cases first
@@ -128,8 +125,12 @@ class ComputeUFinal:
                     self.variables['CASE'] = 1
                     if self.variables.COMPUTE_RELEVANT_VARIABLES and self.variables.U_FINAL != u2:
                         self.variables['IU_U0_T'] = ints.elliptical_integral_cubic_all_roots_real(
-                            list_of_exponents, [-u1, u2, u3], [1.0, -1.0, -1.0], self.variables.RF_IU_U0,
-                            self.variables.U_START, u2
+                            p=list_of_exponents,
+                            a=[-u1, u2, u3],
+                            b=[1.0, -1.0, -1.0],
+                            ffr=self.variables.RF_IU_U0,
+                            y=self.variables.U_START,
+                            x=u2
                         )
                     elif self.variables.U_START == u2:
                         self.variables['IU_U0_T'] = 0.0
@@ -148,17 +149,22 @@ class ComputeUFinal:
                         )
                          + 1.0) / 2.0
                     )
-                    if self.variables.COMPUTE_PHI_AND_T_PARTS:
-                        self.variables['IU_T_U1'] = ints.elliptical_integral_cubic_all_roots_real(
-                            list_of_exponents, [-u1, u2, u3], [1.0, -1.0, -1.0], self.variables.RF_IU_U1,
-                            self.variables.U_FINAL, u2
-                        ) / math.sqrt(coefficient_list[1])
+                    # TODO uncomment this if statement after U and MU computation modules are ready
+                    # if self.variables.COMPUTE_PHI_AND_T_PARTS:
+                    #     self.variables['IU_T_U1'] = ints.elliptical_integral_cubic_all_roots_real(
+                    #         list_of_exponents, [-u1, u2, u3], [1.0, -1.0, -1.0], self.variables.RF_IU_U1,
+                    #         self.variables.U_FINAL, u2
+                    #     ) / math.sqrt(coefficient_list[1])
                 elif self.variables.U_START >= u3:
                     self.variables['CASE'] = 2
                     if self.variables.COMPUTE_RELEVANT_VARIABLES and self.variables.U_FINAL != u3:
                         self.variables['IU_U0_T'] = ints.elliptical_integral_cubic_all_roots_real(
-                            list_of_exponents, [-u1, -u2, -u3], [1.0, 1.0, 1.0], self.variables.RF_IU_U0,
-                            u3, self.variables.U_START
+                            p=list_of_exponents,
+                            a=[-u1, -u2, -u3],
+                            b=[1.0, 1.0, 1.0],
+                            ffr=self.variables.RF_IU_U0,
+                            y=u3,
+                            x=self.variables.U_START
                         )
                     elif self.variables.U_START != u3:
                         self.variables['IU_U0_T'] = 0.0
@@ -177,11 +183,12 @@ class ComputeUFinal:
                         )
                          + 1.0) / 2.0
                     )
-                    if self.variables.COMPUTE_PHI_AND_T_PARTS:
-                        self.variables['IU_T_U1'] = ints.elliptical_integral_cubic_all_roots_real(
-                            list_of_exponents, [-u1, -u2, -u3], [1.0, 1.0, 1.0], self.variables.RF_IU_U1,
-                            u3, self.variables.U_FINAL
-                        ) / math.sqrt(coefficient_list[1])
+                    # TODO uncomment this if statement after U and MU computation modules are ready
+                    # if self.variables.COMPUTE_PHI_AND_T_PARTS:
+                    #     self.variables['IU_T_U1'] = ints.elliptical_integral_cubic_all_roots_real(
+                    #         list_of_exponents, [-u1, -u2, -u3], [1.0, 1.0, 1.0], self.variables.RF_IU_U1,
+                    #         u3, self.variables.U_FINAL
+                    #     ) / math.sqrt(coefficient_list[1])
             elif np.abs(discriminant) < 1.0e-16:
                 # here we have case with 3 roots when two of them are equal
                 self.variables.U_TURNING_POINTS = 0
@@ -215,8 +222,69 @@ class ComputeUFinal:
                         self.variables['U_FINAL'] = u1 + (u2 - u1) / math.tanh(jarg) ** 2.0
             else:
                 # here we have a case with one real and two complex roots
-                case = 3
+                self.variables['CASE'] = 3
                 self.variables.U_TURNING_POINTS = 0
+                coefficient_a = -np.sign(1.0, coef_2) * (np.abs(coef_2) * math.sqrt(discriminant)) ** 1.0 / 3.0
+                if coefficient_a != 0.0:
+                    coefficient_b = coef_1 / coefficient_a
+                else:
+                    coefficient_b = 0.0
+                u1 = (coefficient_a + coefficient_b) - coefficient_list[0] / coefficient_list[1] / 3.0
+                self.variables['U14'][0] = u1
+                fgh_coefficients_for_elliptic_integral = [-1.0 / coefficient_list[1] / u1,
+                                                          -1.0 / coefficient_list[1] / u1 / u1, 1.0]
+                # first we check if valid solution exists
+                if self.variables.U_INTEGRAL_SIGN > 0:
+                    self.variables['U_INTEGRAL'] = ints.elliptical_integral_cubic_one_real_and_two_complex_roots(
+                        p=list_of_exponents,
+                        a=[-u1, 0.0, 0.0, 0.0],
+                        b=[1.0, 0.0, 0.0, 0.0],
+                        fgh=fgh_coefficients_for_elliptic_integral,
+                        ffr=self.variables.RF_IU_U1,
+                        y=self.variables.U_START,
+                        x=self.variables.U_PLUS
+                    ) / math.sqrt(coefficient_list[1])
+                else:
+                    self.variables['U_INTEGRAL'] = ints.elliptical_integral_cubic_one_real_and_two_complex_roots(
+                        p=list_of_exponents,
+                        a=[-u1, 0.0, 0.0, 0.0],
+                        b=[1.0, 0.0, 0.0, 0.0],
+                        fgh=fgh_coefficients_for_elliptic_integral,
+                        ffr=self.variables.RF_IU_U1,
+                        y=0.0,
+                        x=self.variables.U_START
+                    ) / math.sqrt(coefficient_list[1])
+
+                if self.variables.MU_INTEGRAL > self.variables.U_INTEGRAL:
+                    self.variables['U_FINAL'] = -1.0
+                    self.variables['CASE'] = 0
+                if self.variables.COMPUTE_RELEVANT_VARIABLES:
+                    # TODO zastanowic sie nad tym U_INTEGRAL w ponizszej linii
+                    self.variables.U_INTEGRAL = ints.elliptical_integral_cubic_one_real_and_two_complex_roots(
+                        p=list_of_exponents,
+                        a=[-u1, 0.0, 0.0, 0.0],
+                        b=[1.0, 0.0, 0.0, 0.0],
+                        fgh=fgh_coefficients_for_elliptic_integral,
+                        ffr=self.variables.RF_IU_U1,
+                        y=u1,
+                        x=self.variables.U_START
+                    ) * self.variables.U_INTEGRAL_SIGN
+                # temporary coefficients
+                c3 = -1.0
+                if self.variables.SPIN != 0.0 or self.variables.L != 0.0:
+                    c3 = (self.variables.SPIN + self.variables.L) / (self.variables.SPIN - self.variables.L)
+                c2 = math.sqrt(3 * u1 * u1 + u1 * c3)
+                c1 = math.sqrt(c2 * coefficient_list[1])
+                m1 = 0.5 + (6.0 * u1 + c3) / c2 / 8.0
+                jarg = c1 * (self.variables.MU_INTEGRAL + self.variables.U_INTEGRAL)
+                sn, cn, dn = scipy.special.ellipj(jarg, m1)
+                self.variables['U_FINAL'] = (c2 + u1 - (c2 - u1) * cn) / (1.0 + cn)
+                # TODO uncomment this if statement after U and MU computation modules are ready, check for correctness
+                # if self.variables.COMPUTE_PHI_AND_T_PARTS:
+                #     self.variables['IU_T_U1'] = ints.elliptical_integral_cubic_all_roots_real(
+                #         list_of_exponents, [-u1, -u2, -u3], [1.0, 1.0, 1.0], self.variables.RF_IU_U1,
+                #         u3, self.variables.U_FINAL
+                #     ) / math.sqrt(coefficient_list[1])
 
 
 if __name__ == '__main__':

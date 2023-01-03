@@ -1,29 +1,14 @@
 import math
-from enum import Enum
 
 
-class GridType(Enum):
-    SQUARE = 'square'
-    CIRCLE = 'circle'
-
-
-class InitSchema:
+class VariablesSchema:
     SPIN: float = 0.998
     INITIAL_POLAR_ANGLE = 60  # initial polar angle in degrees
-    NUMBER_OF_TRAJECTORIES = 1
     COMPUTE_U_FINAL = False
     COMPUTE_PHI_AND_T_PARTS = False
     # this boolean variable force computation of various integrals otherwise they must be supplemented from input
     COMPUTE_RELEVANT_VARIABLES = True
-    SELECT_GRID_TYPE: GridType = GridType.SQUARE
-    ALFA_MIN = -10.0  # min range along Alpha grid
-    ALFA_MAX = 10.0  # max range along Alpha grid
-    BETA_MIN = -10.0  # min range along Beta grid
-    BETA_MAX = 10.0  # max range along Beta grid
-    NUMBER_OF_POINTS_ALONG_X_AXIS = 20
-    NUMBER_OF_POINTS_ALONG_Y_AXIS = 20
     NUMBER_OF_POINTS_ALONG_TRAJECTORY = 500
-    OUTER_DISK_RADIUS = 100.0
     U_START = 0.0  # initial U translates to R
     MU_START = math.cos(INITIAL_POLAR_ANGLE * math.pi / 180.0)  # initial MU translate to initial polar angle
     U_FINAL = 0.0  # final (computed/given) U
@@ -34,6 +19,7 @@ class InitSchema:
     MU_INTEGRAL_SIGN = 1.0  # sign of MU integral
     U_TURNING_POINTS = 0  # number of turning points along U integral
     MU_TURNING_POINTS = 0  # number of turning points along MU integral
+    U_PLUS = 0
 
     # computational variables
     CASE = 0  # case number, computed if COMPUTE_RELEVANT_VARIABLES
@@ -70,4 +56,4 @@ class InitSchema:
             return None
 
 
-input_variables: InitSchema = InitSchema()
+variables: VariablesSchema = VariablesSchema()

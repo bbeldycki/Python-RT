@@ -430,8 +430,8 @@ def elliptical_integral_cubic_all_roots_real(p: list[int], a: list[float], b: li
             return b[3] * k2c / (2 * d14 * d24 * d34) + i1c * (1 - r12 * r13 / 2.0 / r24 / r34) * (b[0] / d14) ** 2
 
 
-def elliptical_integral_cubic_one_real_and_two_complex_roots(p: list, a: list, b: list, fgh: list, ffr: float,
-                                                             y: float, x: float) -> float:
+def elliptical_integral_cubic_one_real_and_two_complex_roots(p: list[int], a: list[float], b: list[float],
+                                                             fgh: list[float], ffr: float, y: float, x: float) -> float:
     """
         Integral computed based on numerical method by B. C; Carlson; A Table of Elliptic Integrals of the Third Kind
         Mathematics of Computation, Volume 51, Number 183, Pages 267-280, July 1988
@@ -522,7 +522,8 @@ def elliptical_integral_cubic_one_real_and_two_complex_roots(p: list, a: list, b
             return b[3] * k2c / 2.0 / d14 / c442 / 2.0 + (b[0] / d14) ** 2 * (1.0 - r12r13 / r24r34) * i1c
 
 
-def elliptical_integral_quartic_all_real_roots(p: list, a: list, b: list, ffr: float, y: float, x: float) -> float:
+def elliptical_integral_quartic_all_real_roots(p: list[int], a: list[float], b: list[float], ffr: float, y: float,
+                                               x: float) -> float:
     """
         Integral computed based on numerical method by B. C; Carlson; A Table of Elliptic Integrals of the Third Kind
         Mathematics of Computation, Volume 51, Number 183, Pages 267-280, July 1988
