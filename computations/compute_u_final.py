@@ -2,6 +2,7 @@ import math
 import numpy as np
 import scipy
 from integrals import integrals as ints
+from integrals import mu_integrals as muints
 
 from setup.init_setup import InitSchema
 from setup.variables import VariablesSchema
@@ -45,19 +46,101 @@ class ComputeUFinal:
             return self.variables.MU_INTEGRAL_SIGN * mu_integral_p1 + coefficient_a * mu_integral_p2 + \
                    coefficient_b * mu_integral_p3
 
-        def compute_case_3() -> float:
-            return 0.0
+        def compute_roots_of_mu() -> tuple[float, float, float]:
+            solution = (self.variables.SPIN * self.variables.SPIN - self.variables.L * self.variables.L -
+                        self.variables.CARTER_CONST * self.variables.CARTER_CONST +
+                        np.sign(1.0, self.variables.SPIN * self.variables.SPIN - self.variables.L * self.variables.L -
+                                self.variables.CARTER_CONST * self.variables.CARTER_CONST) *
+                        math.sqrt((self.variables.SPIN * self.variables.SPIN - self.variables.L * self.variables.L -
+                                   self.variables.CARTER_CONST * self.variables.CARTER_CONST) ** 2.0 + 4.0 *
+                                  self.variables.SPIN * self.variables.SPIN * self.variables.CARTER_CONST *
+                                  self.variables.CARTER_CONST)
+                        ) * 0.5 * (-1)
+            if (self.variables.SPIN * self.variables.SPIN - self.variables.L * self.variables.L -
+                 self.variables.CARTER_CONST * self.variables.CARTER_CONST) < 0.0:
+                mu_negative = -1 * solution / self.variables.SPIN / self.variables.SPIN
+                mu_positive = self.variables.CARTER_CONST * self.variables.CARTER_CONST / solution
+            else:
+                mu_negative = self.variables.CARTER_CONST * self.variables.CARTER_CONST / solution
+                mu_positive = -1 * solution / self.variables.SPIN / self.variables.SPIN
+            return mu_negative, mu_positive, math.sqrt(mu_positive)
 
-        def compute_case_4() -> float:
-            return 0.0
+        def compute_case_3() -> float:
+            mu_minus, mu_pos, mu_plus = compute_roots_of_mu()
+            a1 = self.variables.MU_INTEGRAL_SIGN
+            a2 = self.variables.MU_INTEGRAL_SIGN * (-1.0) ** (self.variables.MU_TURNING_POINTS + 1)
+            a3 = 2.0 * int((2.0 * self.variables.MU_TURNING_POINTS - self.variables.MU_INTEGRAL_SIGN + 1) / 4.0)
+            if mu_minus < 0.0:
+                # symmetric root case
+                # orbit can cross equatorial plane
+                if self.variables.MU_START > mu_plus:
+                    mu_plus = self.variables.MU_START
+                    mu_pos = mu_plus * mu_plus
+                if self.variables.COMPUTE_RELEVANT_VARIABLES:
+                    i1mu, i3mu, self.variables['RF_IMU_MU1'], self.variables['RF_IMU_MU3'] = \
+                        muints.mu_integral_symmetric_case_involving_mu_start(
+                            spin=self.variables.SPIN,
+                            mu_negative=mu_minus,
+                            mu_positive=mu_pos,
+                            mu_plus=mu_plus,
+                            initial_mu=self.variables.MU_START
+                        )
+                else:
+                    # I assign the value for those two variables to make sure that further computation will pass
+                    # without any issues
+                    i1mu = 0.0
+                    i3mu = 0.0
+                self.variables['RF_IMU_MU2'], i2mu = muints.mu_integral_symmetric_case_involving_mu_final(
+                    spin=self.variables.SPIN,
+                    mu_negative=mu_minus,
+                    mu_positive=mu_pos,
+                    mu_plus=mu_plus,
+                    final_mu=self.variables.MU_FINAL,
+                    imum=i3mu
+                )
+            else:
+                if np.abs(self.variables.MU_FINAL) < math.sqrt(mu_minus):
+                    return -1.0
+                else:
+                    # TODO przy testowaniu sprawdzic czy np.sign zwraca float czy int
+                    if np.sign(1.0, self.variables.MU_START) == -1.0:
+                        mu_plus = -1 * mu_plus
+                    if np.abs(mu_plus) < np.abs(self.variables.MU_START):
+                        mu_plus = self.variables.MU_START
+                        mu_pos = mu_plus * mu_plus
+                    mu_minus = min(self.variables.MU_START * self.variables.MU_START, mu_minus)
+                    if self.variables.COMPUTE_RELEVANT_VARIABLES:
+                        i1mu, i3mu, self.variables['RF_IMU_MU1'], self.variables['RF_IMU_MU3'] = \
+                            muints.mu_integral_asymmetric_case_involving_mu_start(
+                                spin=self.variables.SPIN,
+                                mu_negative=mu_minus,
+                                mu_positive=mu_pos,
+                                mu_plus=mu_plus,
+                                initial_mu=self.variables.MU_START
+                            )
+                    else:
+                        # I assign the value for those two variables to make sure that further computation will pass
+                        # without any issues
+                        i1mu = 0.0
+                        i3mu = 0.0
+                    self.variables['RF_IMU_MU2'], i2mu = muints.mu_integral_asymmetric_case_involving_mu_final(
+                        spin=self.variables.SPIN,
+                        mu_negative=mu_minus,
+                        mu_positive=mu_pos,
+                        mu_plus=mu_plus,
+                        final_mu=self.variables.MU_FINAL
+                    )
+            return a1 * i1mu + a2 * i2mu + a3 * i3mu
 
         if case == 1:
             return compute_case_1()
         if case == 2:
             return compute_case_2()
+        if case == 3:
+            return compute_case_3()
         raise Exception('Error occurred in class ComputeUFinal in method compute_mu_integral. '
                         'We checked all possible cases and did not return a proper value. Check file compute_u_final, '
-                        'line: 23.')
+                        f'line: 24, case {case}.')
 
     def compute(self) -> None:
         # we check for edge cases first
@@ -94,7 +177,7 @@ class ComputeUFinal:
         # we are searching for roots of U(u) <=> solutions of equation U(u) = 0
         if coefficient_list[2] == 0.0 and coefficient_list[1] != 0:
             list_of_exponents = [-1, -1, -1, 0, 0]
-            # tree special coefficients for needed for solutions
+            # tree special coefficients needed for solutions
             coef_1 = coefficient_list[0] ** 2.0 / coefficient_list[1] ** 2.0 / 9.0
             coef_2 = (2.0 * coefficient_list[0] ** 3.0 / coefficient_list[1] ** 3.0 + 27.0 / coefficient_list[1]) / 54.0
             discriminant = coef_2 ** 2.0 - coef_1 ** 3.0
@@ -235,7 +318,7 @@ class ComputeUFinal:
                                                           -1.0 / coefficient_list[1] / u1 / u1, 1.0]
                 # first we check if valid solution exists
                 if self.variables.U_INTEGRAL_SIGN > 0:
-                    self.variables['U_INTEGRAL'] = ints.elliptical_integral_cubic_one_real_and_two_complex_roots(
+                    self.variables['IU_T'] = ints.elliptical_integral_cubic_one_real_and_two_complex_roots(
                         p=list_of_exponents,
                         a=[-u1, 0.0, 0.0, 0.0],
                         b=[1.0, 0.0, 0.0, 0.0],
@@ -245,7 +328,7 @@ class ComputeUFinal:
                         x=self.variables.U_PLUS
                     ) / math.sqrt(coefficient_list[1])
                 else:
-                    self.variables['U_INTEGRAL'] = ints.elliptical_integral_cubic_one_real_and_two_complex_roots(
+                    self.variables['IU_T'] = ints.elliptical_integral_cubic_one_real_and_two_complex_roots(
                         p=list_of_exponents,
                         a=[-u1, 0.0, 0.0, 0.0],
                         b=[1.0, 0.0, 0.0, 0.0],
@@ -260,7 +343,7 @@ class ComputeUFinal:
                     self.variables['CASE'] = 0
                 if self.variables.COMPUTE_RELEVANT_VARIABLES:
                     # TODO zastanowic sie nad tym U_INTEGRAL w ponizszej linii
-                    self.variables.U_INTEGRAL = ints.elliptical_integral_cubic_one_real_and_two_complex_roots(
+                    self.variables['IU0'] = ints.elliptical_integral_cubic_one_real_and_two_complex_roots(
                         p=list_of_exponents,
                         a=[-u1, 0.0, 0.0, 0.0],
                         b=[1.0, 0.0, 0.0, 0.0],
@@ -281,10 +364,19 @@ class ComputeUFinal:
                 self.variables['U_FINAL'] = (c2 + u1 - (c2 - u1) * cn) / (1.0 + cn)
                 # TODO uncomment this if statement after U and MU computation modules are ready, check for correctness
                 # if self.variables.COMPUTE_PHI_AND_T_PARTS:
-                #     self.variables['IU_T_U1'] = ints.elliptical_integral_cubic_all_roots_real(
+                #     self.variables['IU'] = ints.elliptical_integral_cubic_all_roots_real(
                 #         list_of_exponents, [-u1, -u2, -u3], [1.0, 1.0, 1.0], self.variables.RF_IU_U1,
                 #         u3, self.variables.U_FINAL
                 #     ) / math.sqrt(coefficient_list[1])
+        # here we work with U(u) as a fourth order polynomial
+        # we are searching for roots of U(u) <=> solutions of equation U(u) = 0
+        else:
+            self.variables['MU_INTEGRAL'] = self.compute_mu_integral(3)
+            if self.variables.MU_INTEGRAL == -1.0:
+                self.variables['U_FINAL'] = -1.0
+                self.variables['CASE'] = 0
+                self.variables['MU_TURNING_POINTS'] = 0
+                return
 
 
 if __name__ == '__main__':

@@ -41,6 +41,9 @@ class VariablesSchema:
     # if there is no turning point present then it set to 0
     IU_U0_T = 0.0
     IU_T_U1 = 0.0
+    IU_T = 0.0
+    IU = 0.0
+    IU0 = 0.0
     # value of MU integral between MU_START and MU_PLUS, computed if COMPUTE_RELEVANT_VARIABLES
     IMU_MU0_MUPLUS = 0.0
     # value of MU integral between MU_MINUS and MU_PLUS, computed if COMPUTE_RELEVANT_VARIABLES
