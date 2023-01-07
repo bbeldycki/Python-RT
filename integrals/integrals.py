@@ -617,8 +617,9 @@ def elliptical_integral_quartic_all_real_roots(p: list[int], a: list[float], b: 
                    + b[0] * b[0] * i1 * (1 - r12 * r13 / (2 * r25 * r35)) - b[4] * b[4] * a111m1m2 / d15 / d25 / d35
 
 
-def elliptical_integral_quartic_two_real_and_two_complex_roots(p: list, a: list, b: list, fgh: list, ffr: float,
-                                                               y: float, x: float) -> float:
+def elliptical_integral_quartic_two_real_and_two_complex_roots(p: list[int], a: list[float], b: list[float],
+                                                               fgh: list[float], ffr: float, y: float,
+                                                               x: float) -> float:
     """
         Integral computed based on numerical method by B. C; Carlson; A Table of Elliptic Integrals of the Third Kind
         Mathematics of Computation, Volume 51, Number 183, Pages 267-280, July 1988
@@ -744,8 +745,8 @@ def elliptical_integral_quartic_two_real_and_two_complex_roots(p: list, a: list,
                    - 2 * b[4] * b[4] / d15 / c552 * compute_a_p1_pn_quadratics(p, a, b, fgh, y, x)
 
 
-def elliptical_integral_quartic_all_complex_roots(p: list, a: list, b: list, fgh1: list, fgh2: list, ffr: float,
-                                                  y: float, x: float) -> float:
+def elliptical_integral_quartic_all_complex_roots(p: list[int], a: list[float], b: list[float], fgh1: list[float],
+                                                  fgh2: list[float], ffr: float, y: float, x: float) -> float:
     """
         Integral computed based on numerical method by B. C; Carlson; A Table of Elliptic Integrals: Two Quadratic Factors
         Mathematics of Computation, Volume 59, Number 199, Pages 165-180, July 1992
